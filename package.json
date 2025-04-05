@@ -1,0 +1,25 @@
+{
+  "name": "depin-json-server",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Control your DePin Hive Witness with on-chain commands",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "url": "git+https://github.com/Crypto-Shots/DePin-Json-Server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Crypto-Shots/DePin-Json-Server/issues"
+  },
+  "keywords": [
+    "depin",
+    "hivewitness",
+    "onchain",
+    "hiveio"
+  ],
+  "author": "Gabe",
+  "dependencies": {
+    "node-fetch": "^3.3.1"
+  }
+}
