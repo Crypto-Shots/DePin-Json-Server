@@ -1,7 +1,9 @@
 import { setLastProcessedBlock } from './queue.js';
 import { getBlockData } from './api/hive.js';
-import { CONSUMER_NORMAL_DELAY_MS, CONSUMER_SHORTER_DELAY_MS, CONSUMER_MAX_BACKOFF_ATTEMPTS, IS_DEBUG, APP_ID } from './config.js';
+import { processPayload } from './processors/scheduler.js';
 import { nap } from './utils/utils.js';
+import { CONSUMER_NORMAL_DELAY_MS, CONSUMER_SHORTER_DELAY_MS, CONSUMER_MAX_BACKOFF_ATTEMPTS, IS_DEBUG, APP_ID } from './config.js';
+
 
 const consumer = async (blockQueue) => {
   while (true) {
@@ -18,15 +20,14 @@ const consumer = async (blockQueue) => {
         if (total_operations > 0) { // ignoring other custom json operations
           const { id: operationId, json: jsonStr } = (operations_result[0]?.op?.value || {});
           if (operationId === APP_ID) {
-          let json;
-          try {
-            json = JSON.parse(jsonStr);
-          } catch (err) {
-            throw new Error(`Invalid json body: ${jsonStr}`);
-          }
-          // Exec Command
-          // ...
-          console.log('[consumer] Command to execute:', json.cmd);
+            let json;
+            try {
+              json = JSON.parse(jsonStr);
+            } catch (err) {
+              throw new Error(`Invalid json body: ${jsonStr}`);
+            }
+            // Process payload
+            processPayload(json);
           }
         }
       } catch (error) {

@@ -14,7 +14,7 @@ export const getBlockDataUrl = (blockNumber) =>
 
 // TIMES
 export const PRODUCER_INTERVAL_MS = 3000;
-export const CONSUMER_NORMAL_DELAY_MS = 3000;
+export const CONSUMER_NORMAL_DELAY_MS = 2000;
 export const CONSUMER_SHORTER_DELAY_MS = 1000;
 export const INITIAL_BACKOFF_MS = 1000;
 
