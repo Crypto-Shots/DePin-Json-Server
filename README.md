@@ -29,13 +29,13 @@ npm install
 - Configure DJS
 
 Edit src/config.js to set up:
-- Admin account list
-- Discord webhook for notifications
-- Healthcheck URLs for:
-    - DJS itself
-    - Chain data consumption
-    - Witness Node status (1. up and 2. functioning properly)
-- Logs forwarding endpoint
+    - Admin account list
+    - Discord webhook for notifications
+    - Healthcheck URLs for:
+        - DJS itself
+        - Chain data consumption
+        - Witness Node status (1. up and 2. functioning properly)
+    - Logs forwarding endpoint
 
 - Start the Server
 
@@ -68,7 +68,8 @@ This project is licensed under the MIT License.
 
 ## WORK IN PROGRESS
 
-- Allow commands execution only frmo whitelisted accounts (admins)
+- Read authorized users from ${masterAccounts[index]}/djs-authorized-users
+- Allow commands execution only from master accounts and authorized users
 - Use pm2 (or npm forever is enough if no reboots ever)
 - Rotate Hive nodes using https://beacon.peakd.com (configurable endpoint)
 - Make Discord webhook configurable
@@ -78,12 +79,13 @@ This project is licensed under the MIT License.
 - Add useful npm commands?
 
 
-# FUTURE IMPROVEMENTS
+## FUTURE IMPROVEMENTS
 
 - crypto-shots.com/witness UI:
-input field for admin username
-input field for command
-commands history
-server output -> from logs forwarder
+    - JSON Doctor GitHub fork as base
+    - dropdown for posting user -> masters in config + pull authorized users from permlink
+    - input field for command (cmd attribute in json)
+    - commands history using this library as SDK to confirm on-chain read
+    - server output -> from logs forwarder
 
 - Support command as reply to a root blog post? (risk of nesting replies)
