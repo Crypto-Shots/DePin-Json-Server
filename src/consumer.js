@@ -2,7 +2,7 @@ import { setLastProcessedBlock } from './queue.js';
 import { getBlockData } from './api/hive.js';
 import { processPayload } from './processors/scheduler.js';
 import { nap } from './utils/utils.js';
-import { CONSUMER_NORMAL_DELAY_MS, CONSUMER_SHORTER_DELAY_MS, CONSUMER_MAX_BACKOFF_ATTEMPTS, IS_DEBUG, APP_ID } from './config.js';
+import { CONSUMER_NORMAL_DELAY_MS, CONSUMER_SHORTER_DELAY_MS, CONSUMER_MAX_BACKOFF_ATTEMPTS, IS_DEBUG, APP_ID } from './config/config.js';
 
 
 const consumer = async (blockQueue) => {
@@ -18,7 +18,7 @@ const consumer = async (blockQueue) => {
         // Extract Json body
         const { total_operations = 0, operations_result = [] } = (data || {});
         if (total_operations > 0) { // ignoring other custom json operations
-          const { id: operationId, json: jsonStr } = (operations_result[0]?.op?.value || {});
+          const { id: operationId, json: jsonStr, required_posting_auths = [] } = (operations_result[0]?.op?.value || {});
           if (operationId === APP_ID) {
             let json;
             try {
@@ -27,7 +27,8 @@ const consumer = async (blockQueue) => {
               throw new Error(`Invalid json body: ${jsonStr}`);
             }
             // Process payload
-            processPayload(json);
+            const author = required_posting_auths[0];
+            processPayload({ json, author });
           }
         }
       } catch (error) {

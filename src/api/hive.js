@@ -4,7 +4,7 @@ import {
   getBlockDataUrl,
   INITIAL_BACKOFF_MS,
   CUSTOM_JSON_OPERATION_ID,
-} from '../config.js';
+} from '../config/config.js';
 import { notifyDiscord } from './discord.js';
 
 

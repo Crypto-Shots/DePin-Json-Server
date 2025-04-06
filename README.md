@@ -28,8 +28,8 @@ npm install
 
 - Configure DJS
 
-Edit src/config.js to set up:
-    - Admin account list
+Edit src/config to set up:
+    - Admin account list (in users.js)
     - Discord webhook for notifications
     - Healthcheck URLs for:
         - DJS itself

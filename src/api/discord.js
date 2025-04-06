@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { DISCORD_WEBHOOK_URL } from '../config.js';
+import { DISCORD_WEBHOOK_URL } from '../config/config.js';
 
 export async function notifyDiscord(message) {
   try {

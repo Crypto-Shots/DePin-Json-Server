@@ -1,4 +1,4 @@
-import { IS_DEBUG, QUEUE_MAX_SIZE } from './config.js';
+import { IS_DEBUG, QUEUE_MAX_SIZE } from './config/config.js';
 
 
 let lastProcessedBlock = 0;

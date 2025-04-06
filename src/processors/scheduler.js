@@ -1,4 +1,4 @@
-import { IS_DEBUG } from '../config.js';
+import { IS_DEBUG } from '../config/config.js';
 import { execAdminCommand } from './modules/exec.js';
 
 
@@ -9,14 +9,14 @@ import { execAdminCommand } from './modules/exec.js';
 const processors = [
   {
     name: 'commandExecutor',
-    async process(payload) {
-      await execAdminCommand(payload);
+    async process({ payload, author }) {
+      await execAdminCommand({ payload, author });
     },
   },
   // The processor above can be replaced with another or more processors can be added here:
   // {
   //   name: 'gameDataProcessor',
-  //   async process(payload) { ... }
+  //   async process({ payload, author }) { ... }
   // },
 ];
 
@@ -26,12 +26,12 @@ const processors = [
  *
  * @param {object} payload - The JSON payload to process.
  */
-export async function processPayload(payload) {
+export async function processPayload({ json: payload, author }) {
   for (let id = 0; id < processors.length; id++) {
     const currentProcessor = processors[id];
     try {
       IS_DEBUG && console.log(`[payloadProcessors] Dispatching payload to processor: ${currentProcessor.name}`);
-      await currentProcessor.process(payload);
+      await currentProcessor.process({ payload, author });
     } catch (error) {
       console.error(`Error in processor "${currentProcessor.name}":`, error);
     }

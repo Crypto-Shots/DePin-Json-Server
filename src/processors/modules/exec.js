@@ -1,6 +1,7 @@
-import { IS_DEBUG } from '../../config.js';
+import { IS_DEBUG } from '../../config/config.js';
 
 import { spawn } from 'child_process';
+import { delegatedAccessUsers, MASTER_USERS } from './config/users.js';
 
 /**
  * Executes a shell command in detached mode.
@@ -51,17 +52,22 @@ function runCommandDetached(command, args = []) {
  * Processes the payload by extracting the "cmd" property and executing it in detached mode.
  * This function is designed to be part of a generic integration interface.
  *
- * @param {object} json - The payload that must include a "cmd" property.
+ * @param {object} payload - The payload that must include a "cmd" property.
  * @returns {Promise<{ pid: number }>} - The result of the command execution.
  */
-export async function execAdminCommand(json) {
-  if (!json || typeof json !== 'object' || !json.cmd) {
+export async function execAdminCommand({ payload, author }) {
+  // Double check payload
+  if (!payload || typeof payload !== 'object' || !payload.cmd) {
     throw new Error('Invalid payload: Expected an object with a "cmd" property.');
   }
-  console.log('[execAdminCommand] executing command found in payload:', json.cmd);
-  // Split the command string into the command and its arguments.
-  // For more complex parsing, use a library like shell-quote.
-  const parts = json.cmd.split(' ');
+  // Verify Authorization
+  if (![...MASTER_USERS, ...delegatedAccessUsers].includes(author)) {
+    console.errro(`unauthorized user ${author} tried to execute: ${payload?.cmd}`);
+    return;
+  }
+  // Exec
+  console.log('[execAdminCommand] executing command found in payload:', payload.cmd);
+  const parts = payload.cmd.split(' '); // ..or use a library like shell-quote
   const command = parts[0];
   const args = parts.slice(1);
   const pid = await runCommandDetached(command, args);

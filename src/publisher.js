@@ -1,6 +1,6 @@
 import { getLastProcessedBlock, setLastProcessedBlock } from './queue.js';
 import { getLatestBlock } from './api/hive.js';
-import { IS_DEBUG, PRODUCER_INTERVAL_MS, PRODUCER_MAX_BACKOFF_ATTEMPTS } from './config.js';
+import { IS_DEBUG, PRODUCER_INTERVAL_MS, PRODUCER_MAX_BACKOFF_ATTEMPTS } from './config/config.js';
 import { nap } from './utils/utils.js';
 
 const publisher = async (blockQueue) => {
