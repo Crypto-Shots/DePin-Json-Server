@@ -20,15 +20,14 @@ The integration interface is designed to be agnostic. Currently, it dispatches p
 
 ## Usage
 
-- Install Dependencies
+##### Install Dependencies
 
 ```
 npm install
 ```
 
-- Configure DJS
-
-Edit src/config to set up:
+##### Configure DJS
+  - Edit src/config to set up:
     - Admin account list (in users.js)
     - Discord webhook for notifications
     - Healthcheck URLs for:
@@ -37,14 +36,14 @@ Edit src/config to set up:
         - Witness Node status (1. up and 2. functioning properly)
     - Logs forwarding endpoint
 
-- Start the Server
+##### Start the Server
 
 ```
 npm start
 ```
-TODO: replace with pm2 start ecostystem.config.js
+*TODO: replace with pm2 start ecostystem.config.js*
 
-- Broadcast Commands
+##### Broadcast Commands
 
 Use JSON Doctor (Open Source) to broadcast on-chain custom JSON commands:
 https://jsondoctor.github.io
@@ -64,7 +63,11 @@ Contributions, bug fixes, and feature improvements are welcome! Please fork the 
 
 This project is licensed under the MIT License.
 
+<br>
+
 -----
+
+<br>
 
 ## WORK IN PROGRESS
 
