@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'cross-fetch';
 import { DISCORD_WEBHOOK_URL } from '../config/config.js';
 
 export async function notifyDiscord(message) {

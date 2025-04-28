@@ -6,11 +6,11 @@ export const APP_ID = 'djs-server';
 export const QUEUE_MAX_SIZE = 40;
 
 // HIVE API
-export const HIVE_API_NODE = 'api.hive.blog';
+export const DEFAULT_HIVE_API_NODE = 'https://hiveapi.actifit.io';
 export const CUSTOM_JSON_OPERATION_ID = 18;
-export const LATEST_BLOCK_URL = `https://${HIVE_API_NODE}/hafbe-api/block-numbers?page-size=1`;
-export const getBlockDataUrl = (blockNumber) =>
-    `https://${HIVE_API_NODE}/hafah-api/blocks/${blockNumber}/operations?operation-types=18&path-filter=value.id=${APP_ID}`;
+export const LATEST_BLOCK_PATH_V1 = `hafbe-api/block-numbers?page-size=1`;
+// export const LATEST_BLOCK_PATH_V2 = `hafbe-api/block-search?page-size=1`;
+export const getBlockDataPath = (blockNumber) => `hafah-api/blocks/${blockNumber}/operations?operation-types=18&path-filter=value.id=${APP_ID}`;
 
 // TIMES
 export const PRODUCER_INTERVAL_MS = 3000;

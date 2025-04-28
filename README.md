@@ -92,3 +92,16 @@ This project is licensed under the MIT License.
     - server output -> from logs forwarder
 
 - Support command as reply to a root blog post? (risk of nesting replies)
+
+
+---
+
+<br>
+
+## Support us
+
+- #### [VOTE](https://vote.hive.uno/@crypto-shots) for our witness 🙇‍♂️
+- Use the [Issues](https://github.com/Crypto-Shots/Hive-Rewards/issues) tab to report bugs.
+- Create [Merge Requests](https://github.com/Crypto-Shots/Hive-Rewards/pulls) for potential improvements and fixes.
+
+<br>

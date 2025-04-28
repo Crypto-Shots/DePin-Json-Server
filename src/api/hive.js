@@ -1,12 +1,35 @@
-import fetch from 'node-fetch';
+import fetch from 'cross-fetch';
 import {
-  LATEST_BLOCK_URL,
-  getBlockDataUrl,
+  getBlockDataPath,
   INITIAL_BACKOFF_MS,
   CUSTOM_JSON_OPERATION_ID,
+  DEFAULT_HIVE_API_NODE,
+  IS_DEBUG,
+  LATEST_BLOCK_PATH_V1,
 } from '../config/config.js';
 import { notifyDiscord } from './discord.js';
 
+import { peakdBeaconWrapper } from 'hiverewards';
+import { nap } from '../utils/utils.js';
+const { getHealthyHiveNode } = peakdBeaconWrapper;
+
+
+let node = DEFAULT_HIVE_API_NODE;
+
+const getHealthyNode = async (attempt = 1, defaultRetryDelay = 300, maxRetries = 10) => {
+  try {
+    node = await getHealthyHiveNode();
+    console.log('Picked new node:', { node, attempt });
+    const res = await fetch(`${node}/${LATEST_BLOCK_PATH_V1}`);
+    if (!res.ok) throw new Error(`Response not ok: ${res.status}`);
+    return node;
+  } catch (err) {
+    console.error('Failed to get healthy Hive node with v1 path', { attempt }, err);
+    if (attempt === maxRetries) return DEFAULT_HIVE_API_NODE;
+    await nap((2 ** attempt) * defaultRetryDelay);
+    return getHealthyNode(++attempt);
+  }
+};
 
 async function retryWithExponentialBackoff(apiCallFunc, apiName, maxAttempts) {
   let attempt = 1;
@@ -36,7 +59,8 @@ export async function getLatestBlock(maxAttempts) {
   return await retryWithExponentialBackoff(
     async () => {
       try {
-        const res = await fetch(LATEST_BLOCK_URL);
+        const url = `${node}/${LATEST_BLOCK_PATH_V1}`;
+        const res = await fetch(url);
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
@@ -51,10 +75,12 @@ export async function getLatestBlock(maxAttempts) {
         return block_num;
       } catch (err) {
         console.error('Something broke fetching latest block', err);
+        node = await getHealthyNode();
+
         caughtfetchBlock++;
         if (caughtfetchBlock === maxAttempts) {
           await notifyDiscord(
-            `${LATEST_BLOCK_URL} has exceeded ${maxAttempts} attempts. Error: ${err}`
+            `${LATEST_BLOCK_PATH_V1} has exceeded ${maxAttempts} attempts. Error: ${err}`
           );
           caughtfetchBlock = 0;
         }
@@ -70,9 +96,10 @@ let caughtBlockData = 0;
 export async function getBlockData(blockNumber, maxAttempts) {
   return await retryWithExponentialBackoff(
     async () => {
-      let url;
+      let path;
       try {
-        url = getBlockDataUrl(blockNumber);
+        path = getBlockDataPath(blockNumber);
+        const url = `${node}/${path}`;
         const res = await fetch(url);
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -80,6 +107,8 @@ export async function getBlockData(blockNumber, maxAttempts) {
         return await res.json();
       } catch (err) {
         console.error('Something broke fetching block data', err);
+        node = await getHealthyNode();
+
         caughtBlockData++;
         if (caughtBlockData === maxAttempts) {
           await notifyDiscord(
