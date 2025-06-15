@@ -5,7 +5,7 @@ import {
   CUSTOM_JSON_OPERATION_ID,
   DEFAULT_HIVE_API_NODE,
   IS_DEBUG,
-  LATEST_BLOCK_PATH_V1,
+  LATEST_BLOCK_PATH_V2,
 } from '../config/config.js';
 import { notifyDiscord } from './discord.js';
 
@@ -20,7 +20,7 @@ const getHealthyNode = async (attempt = 1, defaultRetryDelay = 300, maxRetries =
   try {
     node = await getHealthyHiveNode();
     console.log('Picked new node:', { node, attempt });
-    const res = await fetch(`${node}/${LATEST_BLOCK_PATH_V1}`);
+    const res = await fetch(`${node}/${LATEST_BLOCK_PATH_V2}`);
     if (!res.ok) throw new Error(`Response not ok: ${res.status}`);
     return node;
   } catch (err) {
@@ -58,8 +58,9 @@ let caughtfetchBlock = 0;
 export async function getLatestBlock(maxAttempts) {
   return await retryWithExponentialBackoff(
     async () => {
+      let url;
       try {
-        const url = `${node}/${LATEST_BLOCK_PATH_V1}`;
+        url = `${node}/${LATEST_BLOCK_PATH_V2}`;
         const res = await fetch(url);
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -68,19 +69,20 @@ export async function getLatestBlock(maxAttempts) {
         if (!data?.blocks_result || !data?.blocks_result[0]?.block_num) {
           throw new Error('Invalid response, missing block data');
         }
-        const { block_num, op_type_ids = [] } = data.blocks_result[0];
-        if (!op_type_ids.includes(CUSTOM_JSON_OPERATION_ID)) {
+        IS_DEBUG && console.log('Block data:', data.blocks_result[0]);
+        const { block_num, operations = [] } = data.blocks_result[0];
+        if (!operations.find(opObj => opObj.op_type_id === CUSTOM_JSON_OPERATION_ID)) {
           return null;
         }
         return block_num;
       } catch (err) {
-        console.error('Something broke fetching latest block', err);
+        console.error('Something broke fetching latest block', url, err);
         node = await getHealthyNode();
 
         caughtfetchBlock++;
         if (caughtfetchBlock === maxAttempts) {
           await notifyDiscord(
-            `${LATEST_BLOCK_PATH_V1} has exceeded ${maxAttempts} attempts. Error: ${err}`
+            `${LATEST_BLOCK_PATH_V2} has exceeded ${maxAttempts} attempts. Error: ${err}`
           );
           caughtfetchBlock = 0;
         }
